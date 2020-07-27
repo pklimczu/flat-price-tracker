@@ -8,9 +8,11 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-import base64, email
+import base64
+import email
 
 # https://developers.google.com/gmail/api/v1/reference/users/messages/get?
+ 
 
 def main():
 
@@ -24,7 +26,6 @@ def main():
 
     service = build('gmail', 'v1', credentials=creds)
 
-    
     results = service.users().messages().list(userId='me').execute()
     print(len(results))
 
@@ -37,7 +38,7 @@ def main():
 
     decoded = base64.urlsafe_b64decode(chunk.encode('ASCII'))
     print(email.message_from_bytes(decoded))
-    
+
 
 if __name__ == '__main__':
     main()
