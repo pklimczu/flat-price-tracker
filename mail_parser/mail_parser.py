@@ -27,7 +27,8 @@ class MailParser:
 
             self.service = build('gmail', 'v1', credentials=creds)
         except Exception as error:
-            print(error)
+            pass
+            #TODO: log some errors
 
 
     def parse_all_messages(self):
@@ -77,10 +78,11 @@ class MailParser:
             if 'parts' in message['payload']:
                 for msg_part in message['payload']['parts']:
                     (isParsed, offer) = self.__extract_data(base64.urlsafe_b64decode(msg_part['body']['data']).decode("utf-8"))
-                    if isParsed:
-                        offer.setHistoryId(message["historyId"])
+                    if isParsed or not isParsed:
+                        offer.set_history_id(message["historyId"])
+                        offer.set_timestamp(message['internalDate'])
                         self.offers.append(offer)
-                        # offer.show()
+                        offer.show()
                         break
                     else:
                         # TODO add some debug messages
@@ -96,22 +98,22 @@ class MailParser:
         url_pattern = r"https:\/\/www.otodom.pl\/oferta.+.html"
         url_match = re.search(url_pattern, data)
         if url_match:
-            new_offer.setUrl(url_match.group())
+            new_offer.set_url(url_match.group())
 
         region_pattern = r"Warszawa, (.+) -"
         region_match = re.search(region_pattern, data)
         if region_match:
-            new_offer.setRegion(region_match.group(1))
+            new_offer.set_region(region_match.group(1))
 
-        price_pattern = r"\n([\d][\d\s]+) zł"
+        price_pattern = r"[\s\n]+([\d][\d\s]+) z"
         price_match = re.search(price_pattern, data)
         if price_match:
-            new_offer.setPrice(price_match.group(1))
+            new_offer.set_price(price_match.group(1))
 
         info_pattern = r"\n([\d][\s]pok.*)"
         info_match = re.search(info_pattern, data)
         if info_match:
-            new_offer.setInfo(info_match.group(1))
+            new_offer.set_info(info_match.group(1))
 
         is_all_parsed = url_match and region_match and price_match and info_match
         return (is_all_parsed, new_offer)
