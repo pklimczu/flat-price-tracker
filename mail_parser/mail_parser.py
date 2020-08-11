@@ -78,14 +78,17 @@ class MailParser:
             if 'parts' in message['payload']:
                 for msg_part in message['payload']['parts']:
                     (isParsed, offer) = self.__extract_data(base64.urlsafe_b64decode(msg_part['body']['data']).decode("utf-8"))
-                    if isParsed or not isParsed:
+                    if isParsed:
                         offer.set_history_id(message["historyId"])
                         offer.set_timestamp(message['internalDate'])
                         self.offers.append(offer)
-                        offer.show()
+                        print(offer.get_info())
                         break
                     else:
-                        # TODO add some debug messages
+                        # TODO add some debug messages, the below should be logs
+                        # self.__dump_to_file(">>>>>>>>>>>>>>>>>>>NOT PARSED:")
+                        # self.__dump_to_file(offer.get_info())
+                        # self.__dump_to_file(base64.urlsafe_b64decode(msg_part['body']['data']).decode("utf-8"))
                         print("[ERROR] Message was not parsed")
 
 
@@ -105,18 +108,24 @@ class MailParser:
         if region_match:
             new_offer.set_region(region_match.group(1))
 
-        price_pattern = r"[\s\n]+([\d][\d\s]+) z"
+        price_pattern = r">[\s\n]+([\d][\d\s]+) z"
         price_match = re.search(price_pattern, data)
         if price_match:
             new_offer.set_price(price_match.group(1))
 
-        info_pattern = r"\n([\d][\s]pok.*)"
+        info_pattern = r">[\n\s]+([\d][\s]pok.*)<\/a>"
         info_match = re.search(info_pattern, data)
         if info_match:
             new_offer.set_info(info_match.group(1))
 
         is_all_parsed = url_match and region_match and price_match and info_match
         return (is_all_parsed, new_offer)
+
+
+    def __dump_to_file(self, data):
+        file = "temp.txt"
+        with open(file, 'a') as f:
+            f.write(data)
 
 
 if __name__ == "__main__":

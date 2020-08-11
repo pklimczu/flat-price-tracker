@@ -35,12 +35,14 @@ class Offer:
         self.timestamp = datetime.fromtimestamp(int(epoch_timestamp)/1000)
 
 
-    def show(self):
-        print("#"*25)
-        print("Okolica:  ", self.region)
-        print("Cena:     ", self.price)
-        print("Info:     ", self.info)
-        print("URL:      ", self.url)
-        print("Hist. id: ", self.history_id)
-        print("Timestamp:", self.timestamp)
+    def get_info(self):
+        info = []
+        info.append("#"*25)
+        info.append("Okolica:  " + self.region)
+        info.append("Cena:     " + self.price)
+        info.append("Info:     " + self.info)
+        info.append("URL:      " + self.url)
+        info.append("Hist. id: " + self.history_id)
+        info.append("Timestamp:" + str(self.timestamp))
+        return "\n".join(info)
 
