@@ -1,8 +1,9 @@
+import hashlib
+
 class OfferData:
     """
-    Parses offer data
-    """
-    
+    Parses offer data from webpage
+    """    
     def __init__(self):
         self.is_key_value_paired = True
         self.values = {}
@@ -11,11 +12,17 @@ class OfferData:
         self.is_reading_details = False
         self.is_reading_descirption = False
 
+        self.price = None
+        self.price_per_m2 = None
+
 
     def show(self):
-        print("Overview:", self.values)
-        print("Description:", self.description)
-
+        print("Overview:    ", self.values)
+        print("Description: ", self.description)
+        print("Price:       ", self.price)
+        print("Price/m2:    ", self.price_per_m2)
+        print("Hash256:     ", self.get_offer_hash())
+        
 
     def start_reading_details(self):
         self.is_reading_details = True
@@ -46,6 +53,17 @@ class OfferData:
                 #TODO: add some logging for issue investigation
         elif self.is_reading_descirption:
             self.is_reading_descirption = False
+
+
+    def get_offer_hash(self):
+        """
+        Calculates hash from values and description. Hash value is used
+        to check offer updates
+        """
+        entry = "#".join((str(self.values), self.description))
+        hash256 = hashlib.sha256()
+        hash256.update(entry.encode("utf-8"))
+        return hash256.hexdigest()
 
 
     def __read_details(self, entry):

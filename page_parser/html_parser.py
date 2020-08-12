@@ -28,7 +28,7 @@ class OtodomParser(HTMLParser):
             self.offer.stop_any_reading()
 
 
-    def handle_data(self, data):
+    def handle_data(self, data):        
         if self.read_content:
             if ".css-" not in data:
                 self.offer.read(data)

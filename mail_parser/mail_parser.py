@@ -83,13 +83,14 @@ class MailParser:
                         offer.set_timestamp(message['internalDate'])
                         self.offers.append(offer)
                         print(offer.get_info())
+                        print(vars(offer))
                         break
-                    else:
-                        # TODO add some debug messages, the below should be logs
-                        # self.__dump_to_file(">>>>>>>>>>>>>>>>>>>NOT PARSED:")
-                        # self.__dump_to_file(offer.get_info())
-                        # self.__dump_to_file(base64.urlsafe_b64decode(msg_part['body']['data']).decode("utf-8"))
-                        print("[ERROR] Message was not parsed")
+        if not isParsed:
+            # TODO add some debug messages, the below should be logs
+            # self.__dump_to_file(">>>>>>>>>>>>>>>>>>>NOT PARSED:")
+            # self.__dump_to_file(offer.get_info())
+            # self.__dump_to_file(base64.urlsafe_b64decode(msg_part['body']['data']).decode("utf-8"))
+            print("[ERROR] Message was not parsed")
 
 
     def __extract_data(self, data):
