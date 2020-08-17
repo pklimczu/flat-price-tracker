@@ -1,21 +1,25 @@
 import re, socket, urllib.request
-from html_parser import OtodomParser
+from .html_parser import OtodomParser
 
 class PageParser:
     """
     Reads URL and parses info from webpage
     """
 
-    def __init__(self):
+    def __init__(self, consts):
+        self.CONSTS = consts
         self.page_data = None
 
     
-    def get_detailed_offer(self):
+    def get_detailed_offer(self, url):
         """
         Returns detailed offer
         """
+
+        self.__parse_url(url)
+
         if self.page_data:
-            op = OtodomParser()
+            op = OtodomParser(self.CONSTS)
             op.feed(self.page_data)
             offer = op.get_offer()
             self.__get_details_from_data(offer)
@@ -26,7 +30,7 @@ class PageParser:
         return None
 
 
-    def parse_url(self, url):
+    def __parse_url(self, url):
         """
         Parses URL and returns data as OfferData
         """

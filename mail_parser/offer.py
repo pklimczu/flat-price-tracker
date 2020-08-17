@@ -21,7 +21,7 @@ class Offer:
 
 
     def set_price(self, price):
-        self.price = int(price.replace(" ", ""))
+        self.price = float(price.replace(" ", "").replace(",","."))
 
 
     def set_region(self, region):

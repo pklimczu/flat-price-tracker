@@ -1,12 +1,13 @@
 from html.parser import HTMLParser
-from offer_data import OfferData
+from .offer_data import OfferDetails
 
 class OtodomParser(HTMLParser):
 
-    def __init__(self):
+    def __init__(self, consts):
         super().__init__()
+        self.CONSTS = consts
         self.read_content = False
-        self.offer = OfferData()
+        self.offer = OfferDetails(self.CONSTS)
 
     
     def handle_starttag(self, tag, attrs):

@@ -1,6 +1,6 @@
 import base64, os.path, pickle, re
 from googleapiclient.discovery import build
-from offer import Offer
+from .offer import Offer
 
 
 class MailParser:
@@ -11,24 +11,7 @@ class MailParser:
     def __init__(self):
         self.service = None
         self.offers = []
-
-
-    def build_service(self):
-        """
-        Build GMail service
-        """
-        try:
-            creds = None
-            if os.path.exists('token.pickle'):
-                with open('token.pickle', 'rb') as token:
-                    creds = pickle.load(token)
-            else:
-                raise Exception("Credentials not found")
-
-            self.service = build('gmail', 'v1', credentials=creds)
-        except Exception as error:
-            pass
-            #TODO: log some errors
+        self.__build_service()
 
 
     def parse_all_messages(self):
@@ -58,6 +41,13 @@ class MailParser:
             self.__parse_messages(message_ids)
 
 
+    def get_offers(self):
+        """
+        Returns all collected offers
+        """
+        return self.offers
+
+
     def __parse_messages(self, message_ids):
         """
         Go message_id by message_id, check if 'otodom' and if so - parse single message
@@ -79,11 +69,10 @@ class MailParser:
                 for msg_part in message['payload']['parts']:
                     (isParsed, offer) = self.__extract_data(base64.urlsafe_b64decode(msg_part['body']['data']).decode("utf-8"))
                     if isParsed:
-                        offer.set_history_id(message["historyId"])
+                        offer.set_history_id(int(message["historyId"]))
                         offer.set_timestamp(message['internalDate'])
                         self.offers.append(offer)
-                        print(offer.get_info())
-                        print(vars(offer))
+                        #TODO: log that offer is read
                         break
         if not isParsed:
             # TODO add some debug messages, the below should be logs
@@ -109,7 +98,7 @@ class MailParser:
         if region_match:
             new_offer.set_region(region_match.group(1))
 
-        price_pattern = r">[\s\n]+([\d][\d\s]+) z"
+        price_pattern = r">[\s\n]+([\d][\d\s,]+) z"
         price_match = re.search(price_pattern, data)
         if price_match:
             new_offer.set_price(price_match.group(1))
@@ -121,6 +110,24 @@ class MailParser:
 
         is_all_parsed = url_match and region_match and price_match and info_match
         return (is_all_parsed, new_offer)
+
+
+    def __build_service(self):
+        """
+        Build GMail service
+        """
+        try:
+            creds = None
+            if os.path.exists('token.pickle'):
+                with open('token.pickle', 'rb') as token:
+                    creds = pickle.load(token)
+            else:
+                raise Exception("Credentials not found")
+
+            self.service = build('gmail', 'v1', credentials=creds)
+        except Exception as error:
+            pass
+            #TODO: log some errors
 
 
     def __dump_to_file(self, data):

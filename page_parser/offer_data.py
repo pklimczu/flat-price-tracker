@@ -1,12 +1,13 @@
 import hashlib
 
-class OfferData:
+class OfferDetails:
     """
     Parses offer data from webpage
     """    
-    def __init__(self):
+    def __init__(self, consts):
+        self.CONSTS = consts
         self.is_key_value_paired = True
-        self.values = {}
+        self.details = {}
         self.recent_added_key = ""
         self.description = ""
         self.is_reading_details = False
@@ -17,12 +18,20 @@ class OfferData:
 
 
     def show(self):
-        print("Overview:    ", self.values)
+        print("Overview:    ", self.details)
         print("Description: ", self.description)
         print("Price:       ", self.price)
         print("Price/m2:    ", self.price_per_m2)
         print("Hash256:     ", self.get_offer_hash())
-        
+
+
+    def get_data(self):
+        """
+        Returns structured details of the offer
+        """
+        return {self.CONSTS.DETAILS: self.details, self.CONSTS.DESCRIPTION: self.description,
+                self.CONSTS.HASH: self.get_offer_hash()}
+
 
     def start_reading_details(self):
         self.is_reading_details = True
@@ -57,10 +66,10 @@ class OfferData:
 
     def get_offer_hash(self):
         """
-        Calculates hash from values and description. Hash value is used
+        Calculates hash from details and description. Hash value is used
         to check offer updates
         """
-        entry = "#".join((str(self.values), self.description))
+        entry = "#".join((str(self.details), self.description))
         hash256 = hashlib.sha256()
         hash256.update(entry.encode("utf-8"))
         return hash256.hexdigest()
@@ -82,7 +91,7 @@ class OfferData:
     def __prepare_key_detail(self, key):
         if ":" in key:
             key = key.strip()[:-1]
-            self.values[key] = ""
+            self.details[key] = ""
             self.recent_added_key = key
             self.is_key_value_paired = False
         else:
@@ -91,5 +100,5 @@ class OfferData:
 
 
     def __prepare_value_detail(self, value):
-        self.values[self.recent_added_key] = value
+        self.details[self.recent_added_key] = value
         self.is_key_value_paired = True
