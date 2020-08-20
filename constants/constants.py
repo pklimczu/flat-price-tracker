@@ -19,21 +19,23 @@ class Constants:
     OTF_HISTORY_ID = "history_id"
     OTF_TIMESTAMP = "timestamp"
     OTF_UPDATE_DATE = "update_date"
-    OTF_LAST_CHECKUP = "last_checkup"
     OTF_UUID = "uuid"
     OTF_PRICE_PER_M2 = "price_per_m2"
     OTF_AREA = "area"
     OTF_ROOMS = "rooms"
+    OTF_IS_REMOVED = "is_removed"
     ###################################
 
 
     # Offer details table fields
-    UUID_OFFER_DETAILS = "uuid_details"
-    OFFER_UUID = "offer_uuid"
+    UUID_OFFER_DETAILS = "uuid_details" # uuid for given offer details entry
+    OFFER_UUID = "offer_uuid"           # uuid for main offer
     DESCRIPTION = "description"
     VALUES = "values"
     HASH = "hash" #(description + values)
     DATE = "date"
+    ODTF_PRICE = "price"
+    OTDF_PRICE_PER_M2 = "price_per_m2"
     ###################################
 
 

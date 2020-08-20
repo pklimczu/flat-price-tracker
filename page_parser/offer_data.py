@@ -29,6 +29,8 @@ class OfferDetails:
         """
         Returns structured details of the offer
         """
+        self.details[self.CONSTS.ODTF_PRICE] = self.price
+        self.details[self.CONSTS.OTDF_PRICE_PER_M2] = self.price_per_m2
         return {self.CONSTS.DETAILS: self.details, self.CONSTS.DESCRIPTION: self.description,
                 self.CONSTS.HASH: self.get_offer_hash()}
 

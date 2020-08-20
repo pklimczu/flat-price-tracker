@@ -15,19 +15,28 @@ class PageParser:
         """
         Returns detailed offer
         """
-
+        self.url = url
         self.__parse_url(url)
 
         if self.page_data:
-            op = OtodomParser(self.CONSTS)
-            op.feed(self.page_data)
-            offer = op.get_offer()
-            self.__get_details_from_data(offer)
-            return offer
+            otodom_html_parser = OtodomParser(self.CONSTS)
+            otodom_html_parser.feed(self.page_data)
+            self.offer_details = otodom_html_parser.get_offer()
+            self.__get_extra_details()
+            return self.offer_details
         else:
             #TODO: log some erros
-            print("[ERROR] Page not parsed")
+            print("[ERROR] Page not parsed, url: ", url)
         return None
+
+
+    def is_checked_offer_removed(self):
+        """
+        If the offer is removed, the returned URL will contain 'from404'
+        """
+        if "from404" in self.returned_url:
+            return True
+        return False
 
 
     def __parse_url(self, url):
@@ -46,6 +55,7 @@ class PageParser:
         try:
             with urllib.request.urlopen(request) as url_request_open:
                 data = url_request_open.read()
+                self.returned_url = url_request_open.geturl()
                 return data.decode("utf-8")
         except Exception as error:
             pass
@@ -53,7 +63,7 @@ class PageParser:
         return None
         
 
-    def __get_details_from_data(self, offer):
+    def __get_extra_details(self):
         """
         Searches for price and price/m2 in the html
         """
@@ -62,20 +72,13 @@ class PageParser:
 
         price_match = re.search(price_pattern, self.page_data)
         if price_match:
-            offer.price = price_match.group(1)
+            self.offer_details.price = price_match.group(1)
         
         price_per_m2_match = re.search(price_per_m2_pattern, self.page_data)
         if price_per_m2_match:
-            offer.price_per_m2 = price_per_m2_match.group(1)
+            self.offer_details.price_per_m2 = price_per_m2_match.group(1)
 
         if not (price_match and price_per_m2_match):
             #TODO: logs error
-            print("[ERROR] Webpage was not parsed properly")
-
-
-if __name__ == "__main__":
-    pp = PageParser()
-    url = "https://www.otodom.pl/oferta/2-pokoje-z-widna-kuchnia-i-wyposazenem-metro-las-ID477Kg.html"
-    pp.parse_url(url)
-    offer = pp.get_detailed_offer()
-    offer.show()
+            print("[ERROR] Webpage was not parsed properly: ", self.url)
+            self.offer_details = None

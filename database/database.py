@@ -22,13 +22,16 @@ class DatabaseController:
         else:
             offer[self.CONSTS.OTF_UUID] = str(uuid.uuid4())
             offer[self.CONSTS.OTF_UPDATE_DATE] = datetime.datetime.now().isoformat()
-            offer[self.CONSTS.OTF_LAST_CHECKUP] = datetime.datetime.now().isoformat()
             self.offers_table.insert(offer)
 
 
     def insert_or_update_offer_details(self, offer_details):
         OfferDetails = Query()
-        search_result = self.db.search(OfferDetails.hash == offer_details.hash)
+        search_result = self.offer_details_table.search(OfferDetails.hash == offer_details[self.CONSTS.UUID_OFFER_DETAILS])
+        if search_result:
+            self.offer_details_table.update(offer_details, OfferDetails.hash == offer_details[self.CONSTS.UUID_OFFER_DETAILS])
+        else:
+            self.offer_details_table.insert(offer_details)
 
 
     def insert_or_update_general(self, entry):
@@ -40,12 +43,24 @@ class DatabaseController:
             self.general_table.insert(entry)
 
 
-    def get_all_offers(self):
-        return self.offers_table.all()
+    def get_all_offers(self, only_valid = False):
+        """
+        Returns all offers. If `only_valid` specified, the removed offers
+        are filtred out.
+        """
+        if only_valid:
+            Offers = Query()
+            return self.offers_table.search(~ Offers.is_removed.exists())
+        else:
+            return self.offers_table.all()
 
 
-    def get_details_for_offer(self, offer_uuid):
-        return self.offer_details_table.search(where(self.CONSTS.OFFER_UUID) == offer_uuid)
+    def get_details_for_offer(self, offer_uuid, only_most_recent = False):
+        offers = self.offer_details_table.search(where(self.CONSTS.OFFER_UUID) == offer_uuid)
+        if offers and only_most_recent:
+            # the last one inserted is the most recent
+            return offers[-1]
+        return offers
 
 
     def get_general_entry(self, key):
@@ -54,6 +69,3 @@ class DatabaseController:
 
     def drop_all(self):
         self.db.truncate()
-
-if __name__ == "__main__":
-    dc = DatabaseController("db.json")
