@@ -1,4 +1,4 @@
-import re, socket, urllib.request
+import logging, re, socket, urllib.request
 from .html_parser import OtodomParser
 
 class PageParser:
@@ -7,6 +7,7 @@ class PageParser:
     """
 
     def __init__(self, consts):
+        self.logger = logging.getLogger(__name__)
         self.CONSTS = consts
         self.page_data = None
 
@@ -25,8 +26,7 @@ class PageParser:
             self.__get_extra_details()
             return self.offer_details
         else:
-            #TODO: log some erros
-            print("[ERROR] Page not parsed, url: ", url)
+            self.logger.error(f"Page not parsed, url: {url}")
         return None
 
 
@@ -58,8 +58,7 @@ class PageParser:
                 self.returned_url = url_request_open.geturl()
                 return data.decode("utf-8")
         except Exception as error:
-            pass
-            #TODO: log some erros
+            self.logger.error(f"Webpage was not parsed {error}")
         return None
         
 
@@ -79,6 +78,5 @@ class PageParser:
             self.offer_details.price_per_m2 = price_per_m2_match.group(1)
 
         if not (price_match and price_per_m2_match):
-            #TODO: logs error
-            print("[ERROR] Webpage was not parsed properly: ", self.url)
+            self.logger.error(f"Webpage was not parsed properly: {self.url}")
             self.offer_details = None

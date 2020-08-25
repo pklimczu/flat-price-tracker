@@ -1,5 +1,5 @@
 from tinydb import TinyDB, Query, where
-import datetime, os, uuid
+import datetime, logging, os, uuid
 
 class DatabaseController:
     """
@@ -7,12 +7,13 @@ class DatabaseController:
     """
     
     def __init__(self, consts, path):
+        self.logger = logging.getLogger(__name__)
         self.CONSTS = consts
         self.db = TinyDB(path)
         self.offers_table = self.db.table(self.CONSTS.OFFERS_TABLE)
         self.offer_details_table = self.db.table(self.CONSTS.OFFER_DETAILS_TABLE)
         self.general_table = self.db.table(self.CONSTS.GENERAL_TABLE)
-        #TODO: log path to db
+        self.logger.info(f"Path to DB passed: {path}")
 
     def insert_or_update_offer(self, offer):
         Offer = Query()

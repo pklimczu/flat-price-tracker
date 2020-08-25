@@ -1,10 +1,11 @@
-import hashlib
+import hashlib, logging
 
 class OfferDetails:
     """
     Parses offer data from webpage
     """    
     def __init__(self, consts):
+        self.logger = logging.getLogger(__name__)
         self.CONSTS = consts
         self.is_key_value_paired = True
         self.details = {}
@@ -60,8 +61,7 @@ class OfferDetails:
         if self.is_reading_details:
             self.is_reading_details = False
             if not self.is_key_value_paired:
-                print("ERROR", self.is_key_value_paired)
-                #TODO: add some logging for issue investigation
+                self.logger.error("Uneven data format when parsing HTML")
         elif self.is_reading_descirption:
             self.is_reading_descirption = False
 
@@ -96,9 +96,6 @@ class OfferDetails:
             self.details[key] = ""
             self.recent_added_key = key
             self.is_key_value_paired = False
-        else:
-            pass
-            #TODO: It is not a key probably
 
 
     def __prepare_value_detail(self, value):

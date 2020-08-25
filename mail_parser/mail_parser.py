@@ -1,4 +1,4 @@
-import base64, os.path, pickle, re
+import base64, logging, os.path, pickle, re
 from googleapiclient.discovery import build
 from .offer import Offer
 
@@ -9,6 +9,7 @@ class MailParser:
     """
 
     def __init__(self):
+        self.logger = logging.getLogger(__name__)
         self.service = None
         self.offers = []
         self.__build_service()
@@ -72,14 +73,13 @@ class MailParser:
                         offer.set_history_id(int(message["historyId"]))
                         offer.set_timestamp(message['internalDate'])
                         self.offers.append(offer)
-                        #TODO: log that offer is read
+                        self.logger.info("Offer is read")
                         break
         if not isParsed:
-            # TODO add some debug messages, the below should be logs
-            # self.__dump_to_file(">>>>>>>>>>>>>>>>>>>NOT PARSED:")
-            # self.__dump_to_file(offer.get_info())
-            # self.__dump_to_file(base64.urlsafe_b64decode(msg_part['body']['data']).decode("utf-8"))
-            print("[ERROR] Message was not parsed")
+            self.logger.error("Message was not parsed:")
+            self.logger.error(">>> NOT PARSED:")
+            self.logger.error(offer.get_info())
+            self.logger.error(base64.urlsafe_b64decode(msg_part['body']['data']).decode("utf-8"))
 
 
     def __extract_data(self, data):
@@ -126,8 +126,7 @@ class MailParser:
 
             self.service = build('gmail', 'v1', credentials=creds)
         except Exception as error:
-            pass
-            #TODO: log some errors
+            self.logger.exception(f"GMail service was not build {error}")
 
 
     def __dump_to_file(self, data):

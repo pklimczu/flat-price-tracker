@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import logging
 
 class Offer:
 
@@ -39,7 +40,7 @@ class Offer:
             else:
                 self.area = chunk.strip()
         if not (self.rooms and self.price_per_m2 and self.area):
-            print("[ERROR] Parsing info failed, info: ", self.info)
+            self.log_error(f"Parsing info failed, info: {self.info}")
 
 
     def set_history_id(self, history_id):
@@ -61,3 +62,10 @@ class Offer:
         info.append("Timestamp: " + self.timestamp)
         return "\n".join(info)
 
+
+    def log_error(self, msg):
+        """
+        Logs errors
+        """
+        logger = logging.getLogger(__name__)
+        logger.error(msg)

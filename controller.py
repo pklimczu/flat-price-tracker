@@ -1,4 +1,4 @@
-import datetime, sys, uuid
+import datetime, logging, sys, uuid
 from database.database import DatabaseController
 from mail_parser.mail_parser import MailParser
 from page_parser.page_parser import PageParser
@@ -10,6 +10,7 @@ class Controller:
     """
 
     def __init__(self):
+        self.__setup_logger()
         self.CONSTS = Constants()
         self.db = DatabaseController(self.CONSTS, "db.json")
 
@@ -107,7 +108,7 @@ class Controller:
                 days_diff = int((self.today - last_check_date).days)
 
                 if days_diff not in allowed_days and days_diff % allowed_days[-1] != 0:
-                    print("[INFO] Skipped - it is not the right time for update")
+                    self.logger.info("Skipped - it is not the right time for update")
                     return
 
         # Here the webpage is fetched and parsed
@@ -117,10 +118,10 @@ class Controller:
             if self.page_parser.is_checked_offer_removed():
                 offer[self.CONSTS.OTF_IS_REMOVED] = True
                 self.db.insert_or_update_offer(offer)
-                print("[INFO] Offer was removed: ", offer[self.CONSTS.OTF_URL])
+                self.logger.info(f"Offer was removed: {offer[self.CONSTS.OTF_URL]}")
                 return
             else:
-                print("[ERROR] Page was not parsed")
+                self.logger.error("Page was not parsed")
                 return
 
         offer_details_data = offer_details.get_data()
@@ -130,7 +131,7 @@ class Controller:
         # If hash of previous offer is the same as the current one, skip insertion
         if stored_offer_details:
             if stored_offer_details[self.CONSTS.HASH] == offer_details_data[self.CONSTS.HASH]:
-                print("[INFO] Skipped - the same hash")
+                self.logger.info(f"Skipped - the same hash: {offer[self.CONSTS.OTF_URL]}")
                 return
         
         # Insert new details
@@ -142,6 +143,19 @@ class Controller:
         # Update `update_date` of offer
         offer[self.CONSTS.OTF_UPDATE_DATE] = datetime.datetime.now().isoformat()
         self.db.insert_or_update_offer(offer)
+
+
+    def __setup_logger(self):
+        """
+        Setups logging facility
+        """
+        file_handler = logging.FileHandler('logs.log')
+        console_handler = logging.StreamHandler()
+        handlers = [file_handler, console_handler]
+        logging.basicConfig(level=logging.INFO,
+                            format='[%(levelname)-7s][%(asctime)s][%(filename)s:%(funcName)s]: %(message)s',
+                            handlers=handlers)
+        self.logger = logging.getLogger("Controller")
 
 
 if __name__ == "__main__":
