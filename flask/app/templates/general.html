@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Ceny mieszkań w wybranych dzielnicach Warszawy{% endblock %}
+
+{% block header %}
+  <h1>Ceny mieszkań w wybranych dzielnicach Warszawy</h1>
+{% endblock %}
+
+{% block content %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Lp.</th>
+            <th>Link</th>
+            <th>Dzielnica</th>
+            <th>Metraż</th>
+            <th>Cena</th>
+            <th>Cena za metr</th>
+            <th>Liczba pokoi</th>
+            <th>Data rejestracji</th>
+            <th>Aktualna</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for offer in offers %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td><a href="{{ offer['url'] }}">#</a></td>
+            <td>{{ offer['region'] }}</td>
+            <td>{{ offer['area'] }}</td>
+            <td>{{ offer['price'] }}</td>
+            <td>{{ offer['price_per_m2'] }}</td>
+            <td>{{ offer['rooms'] }}</td>
+            <td>{{ offer['timestamp'] }}</td>
+            <td>{% if 'is_removed' in offer %}NIE{% else %}TAK{% endif %}</td>
+            <td><a href="/{{ offer['uuid'] }}">więcej</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

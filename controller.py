@@ -12,7 +12,7 @@ class Controller:
     def __init__(self):
         self.__setup_logger()
         self.CONSTS = Constants()
-        self.db = DatabaseController(self.CONSTS, "db.json")
+        self.db = DatabaseController(self.CONSTS, "/home/pklimczu/Projekty/home-tracker/db.json")
 
 
     def show_menu(self):
@@ -96,6 +96,20 @@ class Controller:
 
         for offer in offers:
             self.__check_offer(offer, force)
+
+
+    def get_all_offers(self):
+        """
+        Returns all offers in JSON format
+        """
+        return self.db.get_all_offers()
+
+
+    def get_details_for_offer(self, uuid, all_data=False):
+        """
+        Returns offer details for given offer uuid
+        """
+        pass
 
 
     def __check_offer(self, offer, force):
