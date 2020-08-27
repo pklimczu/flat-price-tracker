@@ -8,7 +8,8 @@ class MailParser:
     Reads emails and parses its content
     """
 
-    def __init__(self):
+    def __init__(self, config):
+        self.config = config
         self.logger = logging.getLogger(__name__)
         self.service = None
         self.offers = []
@@ -73,7 +74,7 @@ class MailParser:
                         offer.set_history_id(int(message["historyId"]))
                         offer.set_timestamp(message['internalDate'])
                         self.offers.append(offer)
-                        self.logger.info("Offer is read")
+                        self.logger.info(f"Offer is read: {offer}")
                         break
         if not isParsed:
             self.logger.error("Message was not parsed:")
@@ -116,27 +117,16 @@ class MailParser:
         """
         Build GMail service
         """
+        token_pickle_path = self.config.get_token_pickle_path()
         try:
             creds = None
-            if os.path.exists('token.pickle'):
-                with open('token.pickle', 'rb') as token:
+            if os.path.exists(token_pickle_path):
+                with open(token_pickle_path, 'rb') as token:
                     creds = pickle.load(token)
             else:
                 raise Exception("Credentials not found")
 
-            self.service = build('gmail', 'v1', credentials=creds)
+            self.service = build('gmail', 'v1', credentials=creds,
+                                 cache_discovery=False)
         except Exception as error:
             self.logger.exception(f"GMail service was not build {error}")
-
-
-    def __dump_to_file(self, data):
-        file = "temp.txt"
-        with open(file, 'a') as f:
-            f.write(data)
-
-
-if __name__ == "__main__":
-    mailParser = MailParser()
-    mailParser.build_service()
-    # mailParser.parse_all_messages()
-    mailParser.parse_new_messages(54831)

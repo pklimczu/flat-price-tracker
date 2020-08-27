@@ -26,6 +26,13 @@ class Configuration:
         return self.__get_path_to("paths", "logs_path")
 
 
+    def get_token_pickle_path(self):
+        """
+        Return path to token.pickle
+        """
+        return self.__get_path_to("paths", "token_pickle_path")
+
+
     def __get_path_to(self, section, option):
         """
         Generic function to return config entry

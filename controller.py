@@ -42,7 +42,7 @@ class Controller:
         history_id = {self.CONSTS.KEY: self.CONSTS.LATEST_HISTORY_ID,
                       self.CONSTS.VALUE: 0}
 
-        mail_parser = MailParser()
+        mail_parser = MailParser(self.config)
         mail_parser.parse_all_messages()
         offers = mail_parser.get_offers()
 
@@ -61,7 +61,7 @@ class Controller:
         if result:
             history_id = result[0]
 
-            mail_parser = MailParser()
+            mail_parser = MailParser(self.config)
             mail_parser.parse_new_messages(history_id[self.CONSTS.VALUE])
             offers = mail_parser.get_offers()
 

@@ -18,7 +18,7 @@
             <td class="right-aligned">{{ offer['price_per_m2'] }}</td>
             <td class="right-aligned">{{ offer['rooms'] }}</td>
             <td class="centered">{{ offer['timestamp'] }}</td>
-            {% if 'is_removed' in offer %}
+            {% if offer and 'is_removed' in offer %}
                 <td class="centered table-danger"></td>
                 {% else %}
                 <td class="centered table-success"></td>
@@ -27,6 +27,8 @@
         </tr>
     </tbody>
 </table>
+
+{{ offer }}
 
 {% for detail in details %}
 <table class="table table-sm" style="width: 1200px;">

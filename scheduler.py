@@ -1,4 +1,4 @@
-import schedule, time
+import schedule, shutil, time
 import controller
 
 def offers_check():
