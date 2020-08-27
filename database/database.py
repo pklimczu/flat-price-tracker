@@ -56,6 +56,14 @@ class DatabaseController:
             return self.offers_table.all()
 
 
+    def get_offer(self, offer_uuid):
+        """
+        Returns only offer with given offer_uuid
+        """
+        Offer = Query()
+        return self.offers_table.get(Offer.uuid == offer_uuid)
+
+
     def get_details_for_offer(self, offer_uuid, only_most_recent = False):
         offers = self.offer_details_table.search(where(self.CONSTS.OFFER_UUID) == offer_uuid)
         if offers and only_most_recent:

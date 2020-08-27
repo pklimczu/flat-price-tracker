@@ -105,15 +105,22 @@ class Controller:
         return self.db.get_all_offers()
 
 
+    def get_offer(self, uuid):
+        """
+        Returns offer with given uuid in JSON format
+        """
+        return self.db.get_offer(uuid)
+
+
     def get_details_for_offer(self, uuid, all_data=False):
         """
         Returns offer details for given offer uuid
         """
-        pass
+        return self.db.get_details_for_offer(uuid)
 
 
     def __check_offer(self, offer, force):
-        allowed_days = [1, 3, 4, 5]
+        allowed_days = [1, 2, 3]
 
         # That segment is for skipping offers that were checked recently (as in `allowed_days`)
         if not force:

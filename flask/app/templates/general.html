@@ -8,18 +8,18 @@
 
 {% block content %}
 
-<table>
-    <thead>
+<table class="table table-striped table-sm" style="width: 1200px;">
+    <thead class="table-dark">
         <tr>
             <th>Lp.</th>
             <th>Link</th>
             <th>Dzielnica</th>
             <th>Metraż</th>
-            <th>Cena</th>
-            <th>Cena za metr</th>
-            <th>Liczba pokoi</th>
-            <th>Data rejestracji</th>
-            <th>Aktualna</th>
+            <th class="right-aligned">Cena</th>
+            <th class="right-aligned">Cena za metr</th>
+            <th class="right-aligned">Liczba pokoi</th>
+            <th class="centered">Data rejestracji</th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
@@ -30,12 +30,16 @@
             <td><a href="{{ offer['url'] }}">#</a></td>
             <td>{{ offer['region'] }}</td>
             <td>{{ offer['area'] }}</td>
-            <td>{{ offer['price'] }}</td>
-            <td>{{ offer['price_per_m2'] }}</td>
-            <td>{{ offer['rooms'] }}</td>
-            <td>{{ offer['timestamp'] }}</td>
-            <td>{% if 'is_removed' in offer %}NIE{% else %}TAK{% endif %}</td>
-            <td><a href="/{{ offer['uuid'] }}">więcej</a></td>
+            <td class="right-aligned">{{ offer['price'] }}</td>
+            <td class="right-aligned">{{ offer['price_per_m2'] }}</td>
+            <td class="right-aligned">{{ offer['rooms'] }}</td>
+            <td class="centered">{{ offer['timestamp'] }}</td>
+            {% if 'is_removed' in offer %}
+                <td class="centered table-danger"></td>
+                {% else %}
+                <td class="centered table-success"></td>
+            {% endif %}
+            <td class="right-aligned"><a href="/{{ offer['uuid'] }}">więcej</a></td>
         </tr>
         {% endfor %}
     </tbody>

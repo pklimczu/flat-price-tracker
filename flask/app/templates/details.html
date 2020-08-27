@@ -1,15 +1,60 @@
 {% extends 'base.html' %}
 
+{% block title %}Szczegóły dla wybranej oferty{% endblock %}
+
 {% block header %}
-  <h1>{% block title %}Register{% endblock %}</h1>
+<h1>Szczegóły dla wybranej oferty</h1>
+<a href="/">powrót</a>
 {% endblock %}
 
 {% block content %}
-  <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Register">
-  </form>
+<table class="table table-striped table-sm" style="width: 1200px;">
+    <tbody>
+        <tr>
+            <td><a href="{{ offer['url'] }}">#</a></td>
+            <td>{{ offer['region'] }}</td>
+            <td>{{ offer['area'] }}</td>
+            <td class="right-aligned">{{ offer['price'] }}</td>
+            <td class="right-aligned">{{ offer['price_per_m2'] }}</td>
+            <td class="right-aligned">{{ offer['rooms'] }}</td>
+            <td class="centered">{{ offer['timestamp'] }}</td>
+            {% if 'is_removed' in offer %}
+                <td class="centered table-danger"></td>
+                {% else %}
+                <td class="centered table-success"></td>
+            {% endif %}
+            <td class="right-aligned"><a href="/{{ offer['uuid'] }}">więcej</a></td>
+        </tr>
+    </tbody>
+</table>
+
+{% for detail in details %}
+<table class="table table-sm" style="width: 1200px;">
+    <tbody>
+        <tr>
+            <td>Data</td>
+            <td>{{ detail['date'] }}</td>
+        </tr>
+        <tr>
+            <td>Szczegóły</td>
+            <td><ul>{% for entry in detail['details'] %}
+                <li><b>{{ entry }}:</b> {{ detail['details'][entry] }}</li>
+                {% endfor %}</ul>
+            </td>
+        </tr>
+        <tr>
+            <td>Opis</td>
+            {% autoescape false %}
+            <td>{{ detail['description'].replace("\n", "<br />") }}</td>
+            {% endautoescape %}
+        </tr>
+        <tr>
+            <td>Hash</td>
+            <td>{{ detail['hash'] }}</td>
+        </tr>
+    </tbody>
+</table>
+<hr/>
+{% endfor %}
+
 {% endblock %}

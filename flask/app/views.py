@@ -27,12 +27,13 @@ def get_all_offers():
     return handler.get_all_offers()
 
 
-def get_details_for_offer(offer):
+def get_details_for_offer(offer_id):
     """
     Returns details for given offer in JSON
     """
     handler = get_controller_handler()
-    return handler.get_details_for_offer()
+    return (handler.get_offer(offer_id),
+            handler.get_details_for_offer(offer_id))
 
 
 @bp.route('/', methods=['GET'])
@@ -44,4 +45,6 @@ def offers():
 
 @bp.route("/<string:offer_id>", methods=['GET'])
 def details(offer_id):
-    return f"Details of {offer_id}"
+    (offer, details) = get_details_for_offer(offer_id)
+
+    return render_template("details.html", offer=offer, details=details)
