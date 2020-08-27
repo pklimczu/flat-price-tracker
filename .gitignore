@@ -140,3 +140,6 @@ cython_debug/
 # Security
 *.json
 *.pickle
+
+# Other
+config.ini

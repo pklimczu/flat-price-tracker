@@ -3,6 +3,7 @@ from database.database import DatabaseController
 from mail_parser.mail_parser import MailParser
 from page_parser.page_parser import PageParser
 from constants.constants import Constants
+from config.configuration import Configuration
 
 class Controller:
     """
@@ -10,9 +11,10 @@ class Controller:
     """
 
     def __init__(self):
+        self.config = Configuration()
         self.__setup_logger()
         self.CONSTS = Constants()
-        self.db = DatabaseController(self.CONSTS, "/home/pklimczu/Projekty/home-tracker/db.json")
+        self.db = DatabaseController(self.CONSTS, self.config.get_db_path())
 
 
     def show_menu(self):
@@ -170,7 +172,7 @@ class Controller:
         """
         Setups logging facility
         """
-        file_handler = logging.FileHandler('logs.log')
+        file_handler = logging.FileHandler(self.config.get_logs_path())
         console_handler = logging.StreamHandler()
         handlers = [file_handler, console_handler]
         logging.basicConfig(level=logging.INFO,
@@ -183,3 +185,4 @@ if __name__ == "__main__":
     controller = Controller()
     controller.usual_update()
     controller.sites_check()
+ 
