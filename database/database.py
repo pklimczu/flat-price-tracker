@@ -9,11 +9,10 @@ class DatabaseController:
     def __init__(self, consts, path):
         self.logger = logging.getLogger(__name__)
         self.CONSTS = consts
-        self.db = TinyDB(path)
-        self.offers_table = self.db.table(self.CONSTS.OFFERS_TABLE)
-        self.offer_details_table = self.db.table(self.CONSTS.OFFER_DETAILS_TABLE)
-        self.general_table = self.db.table(self.CONSTS.GENERAL_TABLE)
+        self.path = path
         self.logger.info(f"Path to DB passed: {path}")
+        self.__load_db()
+
 
     def insert_or_update_offer(self, offer):
         Offer = Query()
@@ -78,3 +77,15 @@ class DatabaseController:
 
     def drop_all(self):
         self.db.truncate()
+
+    
+    def reload_db(self):
+        self.__load_db()
+        self.logger("Database reloaded")
+
+
+    def __load_db(self):
+        self.db = TinyDB(self.path)
+        self.offers_table = self.db.table(self.CONSTS.OFFERS_TABLE)
+        self.offer_details_table = self.db.table(self.CONSTS.OFFER_DETAILS_TABLE)
+        self.general_table = self.db.table(self.CONSTS.GENERAL_TABLE)

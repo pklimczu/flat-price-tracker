@@ -79,7 +79,6 @@ class MailParser:
         if not isParsed:
             self.logger.error("Message was not parsed:")
             self.logger.error(">>> NOT PARSED:")
-            self.logger.error(offer.get_info())
             self.logger.error(base64.urlsafe_b64decode(msg_part['body']['data']).decode("utf-8"))
 
 

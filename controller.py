@@ -15,6 +15,7 @@ class Controller:
         self.__setup_logger()
         self.CONSTS = Constants()
         self.db = DatabaseController(self.CONSTS, self.config.get_db_path())
+        self.db_update = datetime.datetime.now()
 
 
     def show_menu(self):
@@ -112,6 +113,7 @@ class Controller:
         """
         Returns all offers in JSON format
         """
+        self.__check_reload_db()
         offers = self.db.get_all_offers()
         last_update = self.db.get_general_entry(self.CONSTS.LATEST_UPDATE_DATE)[self.CONSTS.VALUE]
         return (offers, last_update)
@@ -121,6 +123,7 @@ class Controller:
         """
         Returns offer with given uuid in JSON format
         """
+        self.__check_reload_db()
         return self.db.get_offer(uuid)
 
 
@@ -128,6 +131,7 @@ class Controller:
         """
         Returns offer details for given offer uuid
         """
+        self.__check_reload_db()
         return self.db.get_details_for_offer(uuid)
 
 
@@ -189,6 +193,19 @@ class Controller:
                             format='[%(levelname)-7s][%(asctime)s][%(filename)s:%(funcName)s]: %(message)s',
                             handlers=handlers)
         self.logger = logging.getLogger("Controller")
+
+
+    def __check_reload_db(self):
+        """
+        Rereads database content
+        """
+        now = datetime.datetime.now()
+        difference = now - self.db_update
+        hours = difference.seconds // 3600
+        if hours > 1:
+            self.logger.info("Database were reloaded")
+            self.db_update = now
+            self.db.reload_db()
 
 
 if __name__ == "__main__":
