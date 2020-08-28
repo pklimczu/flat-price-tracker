@@ -28,8 +28,8 @@ def database_backup():
 
 if __name__ == "__main__":
 
-    schedule.every(12).hour.do(offers_check)
-    schedule.every(24).hour.do(database_backup)
+    schedule.every(12).hours.do(offers_check)
+    schedule.every(24).hours.do(database_backup)
 
     while True:
         schedule.run_pending()
