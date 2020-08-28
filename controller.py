@@ -67,6 +67,8 @@ class Controller:
 
             if offers:
                 self.__insert_or_update_offers(offers, history_id)
+        else:
+            self.full_update()
 
 
     def __insert_or_update_offers(self, offers, history_id):
