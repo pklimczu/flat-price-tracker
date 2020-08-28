@@ -73,7 +73,7 @@ class DatabaseController:
 
 
     def get_general_entry(self, key):
-        return self.general_table.search(where(self.CONSTS.KEY) == key)
+        return self.general_table.get(where(self.CONSTS.KEY) == key)
 
 
     def drop_all(self):

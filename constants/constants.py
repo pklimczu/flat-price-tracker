@@ -41,6 +41,7 @@ class Constants:
 
     # General table fields
     LATEST_HISTORY_ID = "latest_history_id"
+    LATEST_UPDATE_DATE = "latest_update_date"
     ###################################
 
 

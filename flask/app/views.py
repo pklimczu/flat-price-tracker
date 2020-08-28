@@ -6,6 +6,7 @@ from flask import (
 
 bp = Blueprint('views', __name__)
 
+handler = None
 
 def get_controller_handler():
     """
@@ -15,7 +16,10 @@ def get_controller_handler():
     sys.path.append("..")
     import controller
 
-    handler = controller.Controller()
+    global handler
+    if handler is None:
+        handler = controller.Controller()
+
     return handler
 
 
@@ -38,9 +42,9 @@ def get_details_for_offer(offer_id):
 
 @bp.route('/', methods=['GET'])
 def offers():
-    offers = get_all_offers()
+    (offers, last_update) = get_all_offers()
     
-    return render_template("general.html", offers=offers)
+    return render_template("general.html", offers=reversed(offers), last_update=last_update)
 
 
 @bp.route("/<string:offer_id>", methods=['GET'])

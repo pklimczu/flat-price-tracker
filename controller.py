@@ -59,7 +59,7 @@ class Controller:
         result = self.db.get_general_entry(self.CONSTS.LATEST_HISTORY_ID)
 
         if result:
-            history_id = result[0]
+            history_id = result
 
             mail_parser = MailParser(self.config)
             mail_parser.parse_new_messages(history_id[self.CONSTS.VALUE])
@@ -99,12 +99,20 @@ class Controller:
         for offer in offers:
             self.__check_offer(offer, force)
 
+        today = datetime.datetime.today().isoformat()
+        last_update_entry_db = {self.CONSTS.KEY: self.CONSTS.LATEST_UPDATE_DATE,
+                                self.CONSTS.VALUE: today}
+        self.db.insert_or_update_general(last_update_entry_db)
+        self.logger.info(f"Update successful: {today}")
+
 
     def get_all_offers(self):
         """
         Returns all offers in JSON format
         """
-        return self.db.get_all_offers()
+        offers = self.db.get_all_offers()
+        last_update = self.db.get_general_entry(self.CONSTS.LATEST_UPDATE_DATE)[self.CONSTS.VALUE]
+        return (offers, last_update)
 
 
     def get_offer(self, uuid):
