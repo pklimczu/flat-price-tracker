@@ -81,7 +81,7 @@ class DatabaseController:
     
     def reload_db(self):
         self.__load_db()
-        self.logger("Database reloaded")
+        self.logger.info("Database reloaded")
 
 
     def __load_db(self):

@@ -21,8 +21,11 @@ def database_backup():
     path_to_db = config.get_db_path()
     path_to_db_without_filename = os.path.dirname(path_to_db)
     path_to_copy = os.path.join(path_to_db_without_filename,
-                                "arch", today + "_db.json")                             
-    os.makedirs(os.path.dirname(path_to_copy))
+                                "arch", today + "_db.json")
+    
+    # if archive path does not exist, create one
+    if not os.path.exists(os.path.dirname(path_to_copy)):
+        os.makedirs(os.path.dirname(path_to_copy))
     shutil.copy(path_to_db, path_to_copy)
 
 
